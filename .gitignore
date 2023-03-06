@@ -1,0 +1,9 @@
+a.txt
+api_key.txt
+script.sql
+script2.sql
+table_data.txt
+/venv
+/another_dir
+__pycache__/
+.idea/
