@@ -25,6 +25,8 @@ def doc_function_template():
             The generated summary has to follow this JSON template:
             {summary_json_template}
             You must ensure that the JSON is well formatted.
+            Make sure to not add extra fields. Do not add the used_functions into the result.
+            Make sure to not add trailing commas.
 
             The function you have to document is:
              
@@ -51,6 +53,9 @@ def doc_base_function_template():
              
             {summary_json_template}
             You must ensure that the JSON is well formatted.
+            Make sure to not add extra fields.
+            Make sure to not add trailing commas.
+        
             The function you have to document is:
 
             {text}

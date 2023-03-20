@@ -4,6 +4,8 @@ from typing import List
 import os
 from typing import Any
 from pydantic import BaseModel
+
+import utils
 from querier import Querier
 from templates import doc_function_template, doc_base_function_template, summary_json_template
 
@@ -47,6 +49,7 @@ class Documenter:
                     functions.pop(shortest_named_index)
 
         return functions
+
     def extract_functions(self, file_path: str) -> List[FunctionDeclaration]:
         print(file_path)
         with open(file_path, "r") as f:
@@ -117,7 +120,7 @@ class Documenter:
             summary_json_template=summary_json_template(),
         )
         response.replace("\n", "")
-        function_docs = json.loads(response)
+        function_docs = utils.json_load(response)
         function.function_docs = function_docs
         print(f"Result: {response}")
         return function_docs
@@ -137,8 +140,7 @@ class Documenter:
         )
         response.replace("\n", "")
         print(f"Result: {response}")
-
-        function_docs = json.loads(response)
+        function_docs = utils.json_load(response)
         function.function_docs = function_docs
 
         return function_docs

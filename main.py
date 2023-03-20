@@ -21,14 +21,18 @@ print(promptlayer_msg)
 exclude_dirs = ["venv", "node_modules"]
 
 directory = input("Enter the directory from where the functions will be extracted: ")
+if len(directory) < 2:
+
+    directory = "./"
+
 print("Select the names of the directories to exclude from scanning, separated by commas")
 print("'env' and 'node_modules' are excluded by default.")
 input_exclude_dirs = input("Directories to exclude: ").split(",")
 
-for directory in input_exclude_dirs:
-    directory = directory.strip()
-    if len(directory) > 0:
-        exclude_dirs.append(directory)
+for exdir in input_exclude_dirs:
+    exdir = exdir.strip()
+    if len(exdir) > 0:
+        exclude_dirs.append(exdir)
 
 print(f"Excluded directories: {exclude_dirs}\n")
 input('Press Enter to continue.')
@@ -38,7 +42,7 @@ documenter = Documenter(openai_api_key, exclude_dirs)
 print("Loading python files...")
 
 exclude_dirs.extend(["venv", "node_modules"])
-functions = documenter.load_functions("./", excl_dirs=exclude_dirs)
+functions = documenter.load_functions(directory, excl_dirs=exclude_dirs)
 input("Press Enter to continue and document functions from all the above directories.")
 documenter.document_all_functions(functions)
 
