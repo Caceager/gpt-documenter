@@ -30,6 +30,8 @@ class Documenter:
         self.querier = Querier(openai_api_key=openai_api_key,
                                promptlayer_api_key=promptlayer_api_key)
         self.exclude_directories = exclude_directories
+        self.total_functions = 0
+        self.progress = 1
 
     def function_string(self, function: FunctionDeclaration):
         return f"""
@@ -90,7 +92,7 @@ class Documenter:
             elif filename.endswith(".py") and os.path.basename(file_path) not in excl_dirs:
                 # If the current file is a Python file, extract functions from it
                 functions.extend(self.extract_functions(file_path))
-
+        self.total_functions = len(functions)
         return functions
 
     def add_used_functions(self, functions: List[FunctionDeclaration]):
@@ -115,17 +117,46 @@ class Documenter:
         estimated_cost_usd = (token_usage / 1000) * 0.002
         return token_usage, estimated_cost_usd
 
+    def get_ordered_functions(self, function: FunctionDeclaration, functions: list[FunctionDeclaration],
+                              ordered_functions: list[FunctionDeclaration], visited_functions: set):
+        if function.partial_function_name in visited_functions:
+            return
+        elif function in ordered_functions:
+            return
+        visited_functions.add(function.partial_function_name)
+        for inner_func_name in function.functions_inside:
+            inner_func = next((f for f in functions if f.partial_function_name == inner_func_name), None)
+            if inner_func is not None:
+                self.get_ordered_functions(inner_func, functions, ordered_functions, visited_functions)
+        ordered_functions.append(function)
+
+    def get_ordered_function_list(self, functions: list[FunctionDeclaration]) -> list[FunctionDeclaration]:
+        ordered_functions = []
+        visited_functions = set()
+        for f in functions:
+            try:
+                self.get_ordered_functions(f, functions, ordered_functions, visited_functions)
+            except Exception as err:
+                print(f"An error has occurred while enqueueing function: {f.function_name}.")
+                raise err
+        return ordered_functions
 
     def document_all_functions(self, functions: list[FunctionDeclaration]):
-        ordered_functions = sorted(functions, key=lambda x: len(x.functions_inside))
-        for of in ordered_functions:
-            self.enqueue_function(of, functions)
+        ordered_functions = self.get_ordered_function_list(functions)
+        for function in ordered_functions:
+            inside_functions = list(
+                filter(
+                    lambda obj: obj.partial_function_name in function.functions_inside,
+                    functions
+                )
+            )
+            self.document_function(function, inside_functions)
 
     def doc_base_function(self, function: FunctionDeclaration):
         template = doc_base_function_template()
         fstring = self.function_string(function)
         pl_tags = ["base function", function.function_name]
-        print(f"Documenting function: {function.function_name}")
+        print(f"Documenting function: {function.function_name} ({self.progress}/{self.total_functions})")
         response = self.querier.send_query(
             prompt=template, language="Python", text=fstring,
             summary_json_template=summary_json_template(),
@@ -142,7 +173,7 @@ class Documenter:
         context = "\n-->".join(inside_function_docs)
         template = doc_function_template()
         pl_tags = ["composed function", function.function_name]
-        print(f"Documenting function: {function.function_name}")
+        print(f"Documenting function: {function.function_name} ({self.progress}/{self.total_functions})")
 
         response = self.querier.send_query(
             prompt=template, language="Python", text=fstring, summary_json_template=summary_json_template(),
@@ -155,26 +186,22 @@ class Documenter:
 
         return function_docs
 
-    def enqueue_function(self, function: FunctionDeclaration, functions: list[FunctionDeclaration]):
-        if function.function_docs is not None:
-            return
-        elif len(function.functions_inside) == 0:
-            return self.document_function(function)
-        else:
-            inside_functions = list(filter(lambda obj: obj.partial_function_name in function.functions_inside, functions))
-            for fun in inside_functions:
-                self.enqueue_function(fun, functions)
-            return self.document_function(function, inside_functions)
 
     def document_function(
             self,
             function: FunctionDeclaration,
             inside_functions: list[FunctionDeclaration] | None = None
     ):
-        function.function_docs = self.doc_function(function, inside_functions) \
-            if len(function.functions_inside) > 0 \
-            else self.doc_base_function(function)
-        function.function_docs["function_name"] = function.partial_function_name
+        try:
+            function.function_docs = self.doc_function(function, inside_functions) \
+                if len(function.functions_inside) > 0 \
+                else self.doc_base_function(function)
+            function.function_docs["function_name"] = function.partial_function_name
+        except Exception as err:
+            print(f"Error ocurred while documenting function {function.function_name}:\n {err}")
+            function.function_docs = ""
+
+        self.progress += 1
 
     def save_docs(self, filename: str, functions):
         docs_list = []
