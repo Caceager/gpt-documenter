@@ -104,8 +104,19 @@ class Documenter:
                 if cast_name in function.function_body and function_name != function.partial_function_name:
                     function.functions_inside.append(function_name)
 
+    def estimate_token_usage(self, functions: [FunctionDeclaration]):
+        token_usage = 0
+        for function in functions:
+            function_text = function.function_body \
+                + function.function_args + function.partial_function_name
+            functions_used = len(function.functions_inside)
+            token_usage += self.querier.calculate_function_tokens(function_text, functions_used)
+
+        estimated_cost_usd = (token_usage / 1000) * 0.002
+        return token_usage, estimated_cost_usd
+
+
     def document_all_functions(self, functions: list[FunctionDeclaration]):
-        self.add_used_functions(functions)
         ordered_functions = sorted(functions, key=lambda x: len(x.functions_inside))
         for of in ordered_functions:
             self.enqueue_function(of, functions)
@@ -124,7 +135,6 @@ class Documenter:
         function.function_docs = function_docs
         print(f"Result: {response}")
         return function_docs
-
 
     def doc_function(self, function: FunctionDeclaration, inside_funtions: list[FunctionDeclaration]):
         fstring = self.function_string(function)
@@ -176,3 +186,12 @@ class Documenter:
         with open(f"{filename}.json", "w") as res:
             res.write(json.dumps(docs_list, indent=2))
         print(f"Docs saved in file: {filename}.json")
+
+        with open(f"{filename}-prompt_data.json", "w") as res:
+            res.write(json.dumps(self.querier.prompts_sent, indent=2))
+
+        total_token_usage = 0
+        for prompt in self.querier.prompts_sent:
+            total_token_usage += prompt["token_usage"]
+
+        print(f"Total token usage: {total_token_usage}")
