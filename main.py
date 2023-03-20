@@ -6,13 +6,17 @@ openai_api_key = os.environ.get("OPENAI_API_KEY")
 if openai_api_key is None or len(openai_api_key) < 10:
     openai_api_key = input("Enter your openai api key: ")
 
+"""
+DISABLED
+
 promptlayer_api_key = os.environ.get("PROMPTLAYER_API_KEY")
 if promptlayer_api_key is None or len(promptlayer_api_key) < 10:
     promptlayer_api_key = input("\nIf you want to use PromptLayer, enter your PromptLayer api key:")
 
 promptlayer_msg = "Continuing with PromptLayer\n" if len(promptlayer_api_key) > 10 else "Continuing without PromptLayer\n"
-
 print(promptlayer_msg)
+"""
+
 
 exclude_dirs = ["venv", "node_modules"]
 
@@ -29,7 +33,8 @@ for directory in input_exclude_dirs:
 print(f"Excluded directories: {exclude_dirs}\n")
 input('Press Enter to continue.')
 
-documenter = Documenter(openai_api_key, exclude_dirs, promptlayer_api_key)
+#documenter = Documenter(openai_api_key, exclude_dirs, promptlayer_api_key)
+documenter = Documenter(openai_api_key, exclude_dirs)
 print("Loading python files...")
 
 exclude_dirs.extend(["venv", "node_modules"])

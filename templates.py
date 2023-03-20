@@ -23,17 +23,18 @@ def doc_function_template():
             -its own content
             -The summaries of all the functions that are used inside the main function.
             The generated summary has to follow this JSON template:
-             {summary_json_template}
-             
-             The function you have to document is:
-             
-             {text}
+            {summary_json_template}
+            You must ensure that the JSON is well formatted.
 
-             The summaries of the functions used inside are:
+            The function you have to document is:
              
-             {summaries}
+            {text}
+
+            The summaries of the functions used inside are:
              
-             The summary's JSON result is:
+            {summaries}
+             
+            The summary's JSON result is:
             """
         ),
         input_variables=["text", "summaries", "language", "summary_json_template"],
@@ -49,7 +50,7 @@ def doc_base_function_template():
             The generated summary has to follow this JSON template:
              
             {summary_json_template}
-
+            You must ensure that the JSON is well formatted.
             The function you have to document is:
 
             {text}

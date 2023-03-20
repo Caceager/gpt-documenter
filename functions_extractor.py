@@ -111,14 +111,15 @@ class Documenter:
         template = doc_base_function_template()
         fstring = self.function_string(function)
         pl_tags = ["base function", function.function_name]
+        print(f"Documenting function: {function.function_name}")
         response = self.querier.send_query(
-            prompt=template, pl_tags=pl_tags, language="Python", text=fstring,
+            prompt=template, language="Python", text=fstring,
             summary_json_template=summary_json_template(),
         )
         response.replace("\n", "")
         function_docs = json.loads(response)
         function.function_docs = function_docs
-        print(f"Documented function: {function.function_name}")
+        print(f"Result: {response}")
         return function_docs
 
 
@@ -128,14 +129,17 @@ class Documenter:
         context = "\n-->".join(inside_function_docs)
         template = doc_function_template()
         pl_tags = ["composed function", function.function_name]
+        print(f"Documenting function: {function.function_name}")
+
         response = self.querier.send_query(
-            prompt=template, language="Python", pl_tags=pl_tags, text=fstring, summary_json_template=summary_json_template(),
+            prompt=template, language="Python", text=fstring, summary_json_template=summary_json_template(),
             summaries=context
         )
         response.replace("\n", "")
+        print(f"Result: {response}")
+
         function_docs = json.loads(response)
         function.function_docs = function_docs
-        print(f"Documented function: {function.function_name}")
 
         return function_docs
 
