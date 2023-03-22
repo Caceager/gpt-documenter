@@ -86,13 +86,15 @@ class Documenter:
         for filename in os.listdir(directory):
             file_path = os.path.join(directory, filename)
             if os.path.isdir(file_path):
-                # If the current file is a directory, recursively call the function to load functions from the subdirectory
+                # If the current file is a directory, recursively call the function
+                # to load functions from the subdirectory
                 if os.path.basename(file_path) not in excl_dirs:
                     functions.extend(self.load_functions(file_path, excl_dirs))
             elif filename.endswith(".py") and os.path.basename(file_path) not in excl_dirs:
                 # If the current file is a Python file, extract functions from it
                 functions.extend(self.extract_functions(file_path))
         self.total_functions = len(functions)
+        self.add_used_functions(functions)
         return functions
 
     def add_used_functions(self, functions: List[FunctionDeclaration]):

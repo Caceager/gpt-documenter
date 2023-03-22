@@ -1,14 +1,11 @@
-import os
-#import promptlayer
+import tiktoken
 from langchain import (
     BasePromptTemplate,
     LLMChain,
 )
 from langchain.chat_models import ChatOpenAI
 
-#from promptlayer.langchain.llms import OpenAI as PromptLayerOpenAI
-from templates import doc_base_function_template
-
+import templates
 
 class Querier:
     def __init__(self, openai_api_key: str, promptlayer_api_key: str | None = None):
@@ -19,6 +16,7 @@ class Querier:
             openai_api_key=self.openai_api_key,
         )
         self.prompts_sent = []
+        self.encoder = tiktoken.encoding_for_model("gpt-3.5-turbo")
 
     def send_query(
             self,
@@ -35,27 +33,33 @@ class Querier:
         results = initial + chain.run(**kwargs)
         query_save_object["response"] = results
 
-        token_usage = (len(results) + len(query_sent_text)) / 4
+        full_text = results + query_sent_text
+        token_usage = self.get_string_tokens(full_text)
         query_save_object["token_usage"] = token_usage
         self.prompts_sent.append(query_save_object)
 
         return results
 
     def calculate_function_tokens(self, function_text: str, functions_used: int):
-        tokens_json_response_template = 80
-        avg_function_doc_length = 340
+        json_template = templates.summary_json_template()
+        tokens_json_response_template = self.get_string_tokens(json_template)
+        avg_function_doc_tokens = 310
 
-        function_tokens = len(function_text) / 4
+        function_tokens = self.get_string_tokens(function_text)
         function_tokens += tokens_json_response_template
         # base function's template
         if functions_used == 0:
-            base_template_tokens = 220
+            base_template = templates.doc_base_function_template().template
+            base_template_tokens = self.get_string_tokens(base_template)
             function_tokens += base_template_tokens
         else:
-            composed_template_tokens = 365
+            composed_template = templates.doc_function_template().template
+            composed_template_tokens = self.get_string_tokens(composed_template)
             function_tokens += composed_template_tokens
-            function_tokens += functions_used * avg_function_doc_length
+            function_tokens += functions_used * avg_function_doc_tokens
 
         return function_tokens
 
+    def get_string_tokens(self, text: str):
+        return len(self.encoder.encode(text))
 

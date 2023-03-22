@@ -37,13 +37,11 @@ for exdir in input_exclude_dirs:
 print(f"Excluded directories: {exclude_dirs}\n")
 input('Press Enter to continue.')
 
-#documenter = Documenter(openai_api_key, exclude_dirs, promptlayer_api_key)
 documenter = Documenter(openai_api_key, exclude_dirs)
 print("Loading python files...")
 
 exclude_dirs.extend(["venv", "node_modules"])
 functions = documenter.load_functions(directory, excl_dirs=exclude_dirs)
-documenter.add_used_functions(functions)
 estimated_token_usage, estimated_cost_usd = documenter.estimate_token_usage(functions)
 print(f"Estimated token usage: {estimated_token_usage}.")
 print(f"Estimated price in USD: {estimated_cost_usd}. (assuming scenarios with big docs)")
