@@ -1,53 +1,44 @@
-import os
-from functions_extractor import Documenter
+from typing import List
+from documenter import Documenter
+import typer
+
+app = typer.Typer()
 
 
-openai_api_key = os.environ.get("OPENAI_API_KEY")
-if openai_api_key is None or len(openai_api_key) < 10:
-    openai_api_key = input("Enter your openai api key: ")
-
-"""
-DISABLED
-
-promptlayer_api_key = os.environ.get("PROMPTLAYER_API_KEY")
-if promptlayer_api_key is None or len(promptlayer_api_key) < 10:
-    promptlayer_api_key = input("\nIf you want to use PromptLayer, enter your PromptLayer api key:")
-
-promptlayer_msg = "Continuing with PromptLayer\n" if len(promptlayer_api_key) > 10 else "Continuing without PromptLayer\n"
-print(promptlayer_msg)
-"""
+@app.command()
+def document_functions(
+        api_key: str,
+        path: str,
+        output_filename: str,
+        excluded_dirs: List[str] = typer.Argument(None)
+        ):
+    documenter = Documenter(api_key, excluded_dirs)
+    excluded_dirs.extend(["venv", "node_modules"])
+    functions = documenter.load_functions(path, excl_dirs=excluded_dirs)
+    documenter.document_all_functions(functions)
+    documenter.save_docs(output_filename, functions)
 
 
-exclude_dirs = ["venv", "node_modules"]
+@app.command()
+def inspect(
+        path: str,
+        output_filename: str,
+        excluded_dirs: List[str] = typer.Argument(None)
+            ):
+    excluded_dirs.extend(["venv", "node_modules"])
+    typer.echo(f"\nExcluded dirs: {excluded_dirs}")
+    documenter = Documenter("", excluded_dirs)
+    functions = documenter.load_functions(path, excl_dirs=excluded_dirs)
+    typer.echo("Files to be documented: ")
+    for path in documenter.path_list:
+        typer.echo(path)
 
-directory = input("Enter the directory from where the functions will be extracted: ")
-if len(directory) < 2:
+    estimated_token_usage, estimated_cost_usd = \
+        documenter.estimate_token_usage(functions)
+    typer.echo(f"Estimated token usage: {estimated_token_usage}")
+    typer.echo(f"Estimated cost in USD: {estimated_cost_usd}")
+    typer.echo(f"\nOutput filename: {output_filename}.json")
 
-    directory = "./"
 
-print("Select the names of the directories to exclude from scanning, separated by commas")
-print("'env' and 'node_modules' are excluded by default.")
-input_exclude_dirs = input("Directories to exclude: ").split(",")
-
-for exdir in input_exclude_dirs:
-    exdir = exdir.strip()
-    if len(exdir) > 0:
-        exclude_dirs.append(exdir)
-
-print(f"Excluded directories: {exclude_dirs}\n")
-input('Press Enter to continue.')
-
-documenter = Documenter(openai_api_key, exclude_dirs)
-print("Loading python files...")
-
-exclude_dirs.extend(["venv", "node_modules"])
-functions = documenter.load_functions(directory, excl_dirs=exclude_dirs)
-estimated_token_usage, estimated_cost_usd = documenter.estimate_token_usage(functions)
-print(f"Estimated token usage: {estimated_token_usage}.")
-print(f"Estimated price in USD: {estimated_cost_usd}. (assuming scenarios with big docs)")
-input("Press Enter to continue and document functions from all the above directories.")
-
-documenter.document_all_functions(functions)
-
-save_filename = input("Enter the filename where the result will be stored: ")
-documenter.save_docs(save_filename, functions)
+if __name__ == "__main__":
+    app()
