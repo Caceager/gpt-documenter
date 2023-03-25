@@ -1,28 +1,14 @@
 import os
-from functions_extractor import Documenter
-
+from documenter import Documenter
 
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 if openai_api_key is None or len(openai_api_key) < 10:
     openai_api_key = input("Enter your openai api key: ")
 
-"""
-DISABLED
-
-promptlayer_api_key = os.environ.get("PROMPTLAYER_API_KEY")
-if promptlayer_api_key is None or len(promptlayer_api_key) < 10:
-    promptlayer_api_key = input("\nIf you want to use PromptLayer, enter your PromptLayer api key:")
-
-promptlayer_msg = "Continuing with PromptLayer\n" if len(promptlayer_api_key) > 10 else "Continuing without PromptLayer\n"
-print(promptlayer_msg)
-"""
-
-
 exclude_dirs = ["venv", "node_modules"]
 
 directory = input("Enter the directory from where the functions will be extracted: ")
 if len(directory) < 2:
-
     directory = "./"
 
 print("Select the names of the directories to exclude from scanning, separated by commas")
@@ -39,9 +25,10 @@ input('Press Enter to continue.')
 
 documenter = Documenter(openai_api_key, exclude_dirs)
 print("Loading python files...")
-
 exclude_dirs.extend(["venv", "node_modules"])
 functions = documenter.load_functions(directory, excl_dirs=exclude_dirs)
+for path in documenter.path_list:
+    print(path)
 estimated_token_usage, estimated_cost_usd = documenter.estimate_token_usage(functions)
 print(f"Estimated token usage: {estimated_token_usage}.")
 print(f"Estimated price in USD: {estimated_cost_usd}. (assuming scenarios with big docs)")
