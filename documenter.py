@@ -27,6 +27,7 @@ class Documenter:
             exclude_directories: list[str] = [],
             promptlayer_api_key: str | None = None
             ):
+        self.path_list = []
         self.querier = Querier(openai_api_key=openai_api_key,
                                promptlayer_api_key=promptlayer_api_key)
         self.exclude_directories = exclude_directories
@@ -53,7 +54,7 @@ class Documenter:
         return functions
 
     def extract_functions(self, file_path: str) -> List[FunctionDeclaration]:
-        print(file_path)
+        self.path_list.append(file_path)
         with open(file_path, "r") as f:
             tree = ast.parse(f.read())
 
@@ -96,6 +97,7 @@ class Documenter:
         self.total_functions = len(functions)
         self.add_used_functions(functions)
         return functions
+
 
     def add_used_functions(self, functions: List[FunctionDeclaration]):
         functions_names = []
@@ -187,7 +189,6 @@ class Documenter:
         function.function_docs = function_docs
 
         return function_docs
-
 
     def document_function(
             self,
