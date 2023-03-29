@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from utils import utils
 from querier import Querier
-from documenter.templates import doc_function_template, doc_base_function_template, summary_json_template
+from .templates import doc_function_template, doc_base_function_template, summary_json_template
 
 
 class FunctionDeclaration(BaseModel):
