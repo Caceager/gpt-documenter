@@ -23,13 +23,11 @@ class FunctionDeclaration(BaseModel):
 class Documenter:
     def __init__(
             self,
-            openai_api_key: str,
+            openai_api_key: str = None,
             exclude_directories: list[str] = [],
-            promptlayer_api_key: str | None = None
             ):
         self.path_list = []
-        self.querier = Querier(openai_api_key=openai_api_key,
-                               promptlayer_api_key=promptlayer_api_key)
+        self.querier = Querier(openai_api_key=openai_api_key)
         self.exclude_directories = exclude_directories
         self.total_functions = 0
         self.progress = 1

@@ -8,13 +8,12 @@ from langchain.chat_models import ChatOpenAI
 import templates
 
 class Querier:
-    def __init__(self, openai_api_key: str, promptlayer_api_key: str | None = None):
-        # promptlayer.api_key = promptlayer_api_key
+    def __init__(self, openai_api_key: str = None):
         self.openai_api_key = openai_api_key
         self.llm = ChatOpenAI(
             temperature=0.0,
             openai_api_key=self.openai_api_key,
-        )
+        ) if openai_api_key is not None else None
         self.prompts_sent = []
         self.encoder = tiktoken.encoding_for_model("gpt-3.5-turbo")
 
