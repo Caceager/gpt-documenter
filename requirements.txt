@@ -1,6 +1,5 @@
 langchain~=0.0.117
 openai
 typer~=0.7.0
-setuptools~=60.2.0
 tiktoken~=0.3.2
 pydantic~=1.10.6
