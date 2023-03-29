@@ -1,5 +1,5 @@
 from langchain import PromptTemplate
-from utils.utils import dedent
+from gpt_documenter.utils import dedent
 
 
 def summary_json_template():

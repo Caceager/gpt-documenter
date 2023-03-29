@@ -5,7 +5,7 @@ from langchain import (
 )
 from langchain.chat_models import ChatOpenAI
 
-from documenter import templates
+from gpt_documenter.documenter import templates
 
 
 class Querier:

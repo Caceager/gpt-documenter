@@ -1,5 +1,5 @@
 from typing import List
-from documenter import Documenter
+from gpt_documenter.documenter import Documenter
 import typer
 
 app = typer.Typer()

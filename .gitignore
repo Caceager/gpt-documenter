@@ -2,3 +2,7 @@ api_key.txt
 /venv
 __pycache__/
 .idea/
+setup.py
+/build
+/dist
+/gptdocumenter.egg-info
