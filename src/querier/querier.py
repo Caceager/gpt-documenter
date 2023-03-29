@@ -5,7 +5,8 @@ from langchain import (
 )
 from langchain.chat_models import ChatOpenAI
 
-import templates
+from documenter import templates
+
 
 class Querier:
     def __init__(self, openai_api_key: str = None):

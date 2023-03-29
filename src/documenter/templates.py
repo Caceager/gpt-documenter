@@ -1,5 +1,5 @@
 from langchain import PromptTemplate
-from utils import dedent
+from utils.utils import dedent
 
 
 def summary_json_template():

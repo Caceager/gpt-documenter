@@ -1,0 +1,234 @@
+[
+  {
+    "functionallity_explanation_summary": "This function initializes an instance of the Querier class with an optional OpenAI API key. It sets the API key and creates a ChatOpenAI instance with a temperature of 0.0 if an API key is provided. It also initializes a list of prompts_sent and sets the encoder for the 'gpt-3.5-turbo' model.",
+    "function_args": "self, openai_api_key: str=None",
+    "explained_function_args": {
+      "self": "The instance of the Querier class being initialized.",
+      "openai_api_key": "An optional string representing the OpenAI API key to be used for the ChatOpenAI instance."
+    },
+    "function_output": "",
+    "function_name": "Querier.__init__"
+  },
+  {
+    "functionallity_explanation_summary": "This function sends a query using a prompt template and returns the results. It also saves the query and its response, as well as the token usage in the response.",
+    "function_args": "self, prompt: BasePromptTemplate, initial: str='', **kwargs",
+    "explained_function_args": {
+      "self": "an instance of the Querier class",
+      "prompt": "a prompt template to be used for the query",
+      "initial": "a string to be added to the beginning of the response",
+      "**kwargs": "additional keyword arguments to be passed to the prompt template"
+    },
+    "function_output": "a string representing the results of the query",
+    "function_name": "Querier.send_query"
+  },
+  {
+    "functionallity_explanation_summary": "This function calculates the total number of tokens in a given string, including tokens generated from a JSON template and, if applicable, tokens generated from function documentation templates. The number of tokens generated from function documentation templates is estimated based on the average number of tokens in a function's documentation. The function uses the encoder of the Querier object to tokenize the input string.",
+    "function_args": "self, function_text: str, functions_used: int",
+    "explained_function_args": {
+      "self": "an instance of the Querier class",
+      "function_text": "a string to be tokenized",
+      "functions_used": "an integer representing the number of functions used inside the input string"
+    },
+    "function_output": "an integer representing the total number of tokens in the input string, including tokens generated from templates",
+    "function_name": "Querier.calculate_function_tokens"
+  },
+  {
+    "functionallity_explanation_summary": "This function returns the number of tokens in a given string using the encoder of the Querier object.",
+    "function_args": "self, text: str",
+    "explained_function_args": {
+      "self": "an instance of the Querier class",
+      "text": "a string to be tokenized"
+    },
+    "function_output": "an integer representing the number of tokens in the input string",
+    "function_name": "Querier.get_string_tokens"
+  },
+  {
+    "functionallity_explanation_summary": "This function is a more lenient version of `textwrap.dedent`. It removes any common leading whitespace from every line in `text` and returns the resulting string.",
+    "function_args": "text: str",
+    "explained_function_args": "text (str): The string to be dedented.",
+    "function_output": "Returns the dedented string.",
+    "function_name": "dedent"
+  },
+  {
+    "functionallity_explanation_summary": "This function receives a string 'text', another string 'text_to_strip' and a boolean 'strip_remaining_text'. It returns the 'text' string with the last occurrence of 'text_to_strip' removed. If 'strip_remaining_text' is True, it also removes the remaining text after the last occurrence of 'text_to_strip'.",
+    "function_args": "text: str, text_to_strip: str, strip_remaining_text: bool",
+    "explained_function_args": {
+      "text": "The string to remove the last occurrence of 'text_to_strip' from.",
+      "text_to_strip": "The string to remove from the end of 'text'.",
+      "strip_remaining_text": "If True, removes the remaining text after the last occurrence of 'text_to_strip'."
+    },
+    "function_output": "Returns the 'text' string with the last occurrence of 'text_to_strip' removed. If 'strip_remaining_text' is True, it also removes the remaining text after the last occurrence of 'text_to_strip'.",
+    "function_name": "strip_last_occurrence"
+  },
+  {
+    "functionallity_explanation_summary": "This function handles a specific JSON error code by removing the last occurrence of a comma in the input 'text' string.",
+    "function_args": "text: str, error_code: str",
+    "explained_function_args": {
+      "text": "The input string that contains the JSON error.",
+      "error_code": "The specific error code that needs to be handled. Currently only supports 'Expecting property name enclosed in double quotes'."
+    },
+    "function_output": "Returns the modified 'text' string with the last occurrence of a comma removed.",
+    "function_name": "handle_json_error"
+  },
+  {
+    "functionallity_explanation_summary": "This function loads a JSON string and returns the corresponding Python object. If the input string contains a JSON decoding error, it attempts to repair the error and return the corresponding Python object.",
+    "function_args": "str_json: str",
+    "explained_function_args": {
+      "str_json": "The input JSON string to be loaded."
+    },
+    "function_output": "Returns the Python object corresponding to the input JSON string. If the input string contains a JSON decoding error, it attempts to repair the error and return the corresponding Python object.",
+    "function_name": "json_load"
+  },
+  {
+    "functionallity_explanation_summary": "This function loads all the Python files in a directory, extracts their function declarations, documents all the functions in a list of FunctionDeclaration objects, and saves the documentation of a list of functions in a JSON file and also saves prompt data in another JSON file. It also calculates the total token usage of the prompts sent.",
+    "function_args": "openai_api_key: A string representing the OpenAI API key.\nproject_path: A string representing the path to the directory containing the Python files to be documented.\noutput_path: A string representing the path to the file where the documentation will be saved.\nexcluded_dirs: A list of strings representing the names of directories to exclude from the search.",
+    "explained_function_args": {
+      "openai_api_key": "A string representing the OpenAI API key.",
+      "project_path": "A string representing the path to the directory containing the Python files to be documented.",
+      "output_path": "A string representing the path to the file where the documentation will be saved.",
+      "excluded_dirs": "A list of strings representing the names of directories to exclude from the search."
+    },
+    "function_output": "This function does not return anything.",
+    "function_name": "document_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function loads all the Python files in a directory, extracts their function declarations, estimates the token usage and cost in USD for a list of FunctionDeclaration objects, and outputs the result to a JSON file. It excludes directories specified in the excluded_paths argument.",
+    "function_args": "project_path: A string representing the path to the directory containing the Python files to be documented. output_path: A string representing the path to the output JSON file. excluded_paths: A list of strings representing the names of directories to exclude from the search.",
+    "explained_function_args": "project_path: A string representing the path to the directory containing the Python files to be documented. output_path: A string representing the path to the output JSON file. excluded_paths: A list of strings representing the names of directories to exclude from the search.",
+    "function_output": "None",
+    "function_name": "inspect"
+  },
+  {
+    "functionallity_explanation_summary": "This function returns a JSON template with empty strings for each field.",
+    "function_args": "",
+    "explained_function_args": "",
+    "function_output": "Returns a JSON template with empty strings for each field.",
+    "function_name": "summary_json_template"
+  },
+  {
+    "functionallity_explanation_summary": "This function generates documentation for a given Python function based on its own content and the summaries of all the functions used inside. The generated summary follows a specific JSON template.",
+    "function_args": "",
+    "explained_function_args": "",
+    "function_output": "Returns a PromptTemplate object that can be used to generate the documentation.",
+    "function_name": "doc_function_template"
+  },
+  {
+    "functionallity_explanation_summary": "This function generates documentation for a given Python function based on its content and the summaries of the functions used inside.",
+    "function_args": "",
+    "explained_function_args": "",
+    "function_output": "Returns a PromptTemplate object that can be used to generate the documentation.",
+    "function_name": "doc_base_function_template"
+  },
+  {
+    "functionallity_explanation_summary": "This function takes in a FunctionDeclaration object and returns a string containing the function's name, arguments, and body.",
+    "function_args": "self, function: FunctionDeclaration",
+    "explained_function_args": "self: an instance of the Documenter class\nfunction: an instance of the FunctionDeclaration class representing the function to be documented",
+    "function_output": "A string containing the function's name, arguments, and body.",
+    "function_name": "Documenter.function_string"
+  },
+  {
+    "functionallity_explanation_summary": "This function takes in a list of FunctionDeclaration objects and removes any duplicates based on their function body. It returns the updated list of FunctionDeclaration objects.",
+    "function_args": "self, functions: List[FunctionDeclaration]",
+    "explained_function_args": "self: the instance of the Documenter class\nfunctions: a list of FunctionDeclaration objects",
+    "function_output": "Returns the updated list of FunctionDeclaration objects with duplicates removed based on their function body.",
+    "function_name": "Documenter.select_functions_names"
+  },
+  {
+    "functionallity_explanation_summary": "This function extracts all the function declarations from a Python file and returns their names. It uses the select_functions_names function to remove duplicates based on their function body.",
+    "function_args": "self, file_path: str",
+    "explained_function_args": "self: the instance of the Documenter class\nfile_path: the path to the Python file to extract function declarations from",
+    "function_output": "Returns a list of function names extracted from the Python file.",
+    "function_name": "Documenter.extract_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function loads all the Python files in a directory and extracts their function declarations. It also adds the used functions to a list of FunctionDeclaration objects. The total number of functions extracted is stored in the instance variable total_functions.",
+    "function_args": "self: The instance of the Documenter class. directory: A string representing the path to the directory containing the Python files. excl_dirs: A list of strings representing the names of directories to exclude from the search.",
+    "explained_function_args": "self: An instance of the Documenter class that contains the list of FunctionDeclaration objects and the total number of functions extracted. directory: A string representing the path to the directory containing the Python files. excl_dirs: A list of strings representing the names of directories to exclude from the search.",
+    "function_output": "Returns a list of FunctionDeclaration objects representing the function declarations extracted from the Python files.",
+    "function_name": "Documenter.load_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function adds used functions to a list of FunctionDeclaration objects.",
+    "function_args": "self: The instance of the Documenter class. functions: A list of FunctionDeclaration objects.",
+    "explained_function_args": "self: An instance of the Documenter class that contains the list of FunctionDeclaration objects. functions: A list of FunctionDeclaration objects that will have their used functions added to their respective functions_inside list.",
+    "function_output": "This function does not return anything.",
+    "function_name": "Documenter.add_used_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function estimates the token usage and cost in USD for a list of FunctionDeclaration objects. It calculates the total number of tokens in each function's body, arguments, and partial name, and adds the number of tokens generated from functions used inside each function. The token usage is then converted to an estimated cost in USD based on a fixed rate of 0.002 USD per 1000 tokens.",
+    "function_args": "self, functions: [FunctionDeclaration]",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "functions": "a list of FunctionDeclaration objects representing the functions to be analyzed"
+    },
+    "function_output": "a tuple containing the total number of tokens in all the functions and the estimated cost in USD",
+    "function_name": "Documenter.estimate_token_usage"
+  },
+  {
+    "functionallity_explanation_summary": "This function recursively orders a list of FunctionDeclaration objects based on their dependencies.",
+    "function_args": "self: the instance of the Documenter class\nfunction: a FunctionDeclaration object to be ordered\nfunctions: a list of FunctionDeclaration objects\nordered_functions: a list of ordered FunctionDeclaration objects\nvisited_functions: a set of visited function names",
+    "explained_function_args": "The 'self' argument is used to access the instance variables of the Documenter class. The 'function' argument is the FunctionDeclaration object to be ordered. The 'functions' argument is a list of all FunctionDeclaration objects. The 'ordered_functions' argument is a list of ordered FunctionDeclaration objects. The 'visited_functions' argument is a set of visited function names.",
+    "function_output": "This function does not return anything, but it modifies the 'ordered_functions' and 'visited_functions' arguments.",
+    "function_name": "Documenter.get_ordered_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function recursively orders a list of FunctionDeclaration objects based on their dependencies.",
+    "function_args": "self: the instance of the Documenter class\nfunctions: a list of FunctionDeclaration objects",
+    "explained_function_args": "The 'self' argument is used to access the instance variables of the Documenter class. The 'functions' argument is a list of all FunctionDeclaration objects. The 'ordered_functions' argument is a list of ordered FunctionDeclaration objects. The 'visited_functions' argument is a set of visited function names.",
+    "function_output": "This function returns a list of ordered FunctionDeclaration objects.",
+    "function_name": "Documenter.get_ordered_function_list"
+  },
+  {
+    "functionallity_explanation_summary": "This function documents all the functions in a list of FunctionDeclaration objects by calling the document_function function for each one.",
+    "function_args": "self: the instance of the Documenter class\nfunctions: a list of FunctionDeclaration objects",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "functions": "a list of FunctionDeclaration objects representing the functions to be documented"
+    },
+    "function_output": "",
+    "function_name": "Documenter.document_all_functions"
+  },
+  {
+    "functionallity_explanation_summary": "This function documents a Python function by sending a query using a prompt template and returning the results. It also saves the query and its response, as well as the token usage in the response.",
+    "function_args": "self, function: FunctionDeclaration",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "function": "an instance of the FunctionDeclaration class representing the function to be documented"
+    },
+    "function_output": "Returns a dictionary containing the documentation for the input function.",
+    "function_name": "Documenter.doc_base_function"
+  },
+  {
+    "functionallity_explanation_summary": "This function generates documentation for a given Python function based on its own content and the summaries of all the functions used inside.",
+    "function_args": "self, function: FunctionDeclaration, inside_funtions: list[FunctionDeclaration]",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "function": "an instance of the FunctionDeclaration class representing the function to be documented",
+      "inside_functions": "a list of FunctionDeclaration objects representing the functions used inside the main function"
+    },
+    "function_output": "Returns a dictionary containing the generated documentation for the input function.",
+    "function_name": "Documenter.doc_function"
+  },
+  {
+    "functionallity_explanation_summary": "This function documents a Python function by sending a query using a prompt template and returning the results. It also saves the query and its response, as well as the token usage in the response.",
+    "function_args": "self, function: FunctionDeclaration, inside_functions: list[FunctionDeclaration] | None=None",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "function": "an instance of the FunctionDeclaration class representing the function to be documented",
+      "inside_functions": "a list of FunctionDeclaration objects representing the functions used inside the main function"
+    },
+    "function_output": "Returns a dictionary containing the documentation for the input function.",
+    "function_name": "Documenter.document_function"
+  },
+  {
+    "functionallity_explanation_summary": "This function saves the documentation of a list of functions in a JSON file and also saves prompt data in another JSON file. It also calculates the total token usage of the prompts sent.",
+    "function_args": "self, filename: str, functions",
+    "explained_function_args": {
+      "self": "an instance of the Documenter class",
+      "filename": "a string representing the name of the file where the documentation will be saved",
+      "functions": "a list of Function objects that will be documented"
+    },
+    "function_output": "This function does not return anything.",
+    "function_name": "Documenter.save_docs"
+  }
+]
