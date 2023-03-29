@@ -4,10 +4,8 @@ GPT-Documenter is a small project that automates the process of documenting Pyth
 
 ## Installation
 
-# -
-
 ```shell
-git clone https://github.com/username/gpt-documenter.git
+pip install gptdocumenter
 ```
 
 
@@ -29,7 +27,7 @@ The `inspect` command allows you to preview the documentation setup and receive 
 Here's an example of how to use the `inspect` command:
 
 ```shell
-python main.py inspect /path/to/project /path/to/output.json directory/to/avoid, file_to_avoid.py
+gptdocumenter inspect /path/to/project /path/to/output.json directory/to/avoid, file_to_avoid.py
 ```
 
 
@@ -44,7 +42,7 @@ The `document-functions` command generates the actual documentation for the Pyth
 
 Here's an example of how to use the `document-functions` command:
 ```shell
-python main.py document-functions YOUR_API_KEY /path/to/project /path/to/output.json directory/to/avoid, file_to_avoid.py
+gptdocumenter document-functions YOUR_API_KEY /path/to/project /path/to/output.json directory/to/avoid, file_to_avoid.py
 ```
 
 Once the command is executed, GPT-Documenter will begin generating the documentation for the functions and save the result as a JSON file in the specified output path.
